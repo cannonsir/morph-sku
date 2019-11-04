@@ -1,0 +1,21 @@
+{
+    "name": "gtd/product",
+    "description": "商品 sku",
+    "type": "library",
+    "authors": [
+        {
+            "name": "jianong",
+            "email": "jianonghe@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [
+                "Gtd\\Product\\ServiceProvider"
+            ]
+        }
+    },
+    "require": {
+        "laravel/framework": ">=5.5"
+    }
+}
