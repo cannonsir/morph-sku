@@ -4,7 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-class CreateProductVariantsTable extends Migration
+class CreateProductAttributeKeysTable extends Migration
 {
     /**
      * Run the migrations.
@@ -14,11 +14,11 @@ class CreateProductVariantsTable extends Migration
     public function up()
     {
         // 属性表
-        Schema::create('product_variants', function (Blueprint $table) {
+        Schema::create('product_attribute_keys', function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('product_id');
-            $table->decimal('amount')->comment('金额');
-            $table->unsignedInteger('stock')->comment('库存');
+            $table->unsignedBigInteger('category_id')->comment('所属分类');
+            $table->boolean('can_custom')->comment('是否可自定义值 true:运营可输入值 false:只能选择属性值');
+            $table->string('name')->comment('属性名称');
             $table->timestamps();
         });
     }
@@ -30,6 +30,6 @@ class CreateProductVariantsTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_variants');
+        Schema::dropIfExists('product_attribute_keys');
     }
 }
