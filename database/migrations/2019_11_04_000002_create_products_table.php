@@ -13,8 +13,8 @@ class CreateProductsTable extends Migration
      */
     public function up()
     {
-        $precisionInt = config('product.precision.int');    // 整型精度(位)
-        $precisionDecimal = config('product.precision.decimal');    // 小数精度(位)
+        $precisionInt = config('product_sku.precision.int');    // 整型精度(位)
+        $precisionDecimal = config('product_sku.precision.decimal');    // 小数精度(位)
         // 商品表
         Schema::create('products', function (Blueprint $table) use ($precisionInt, $precisionDecimal) {
             $table->bigIncrements('id');
@@ -24,7 +24,6 @@ class CreateProductsTable extends Migration
             $table->unsignedInteger('total_numbers')->comment('库存总数量(skus总和/库存总和)');
             $table->unsignedDecimal('amount', $precisionInt, $precisionDecimal)->comment('一口价');
             $table->boolean('on_sale')->comment('是否上架');
-            $table->timestamp('shelf_at')->comment('上架时间');
             $table->timestamps();
         });
     }

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\Product\Models;
+namespace Gtd\Product;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;

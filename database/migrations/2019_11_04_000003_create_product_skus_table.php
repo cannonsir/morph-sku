@@ -13,15 +13,16 @@ class CreateProductSkusTable extends Migration
      */
     public function up()
     {
-        $precisionInt = config('product.precision.int');    // 整型精度(位)
-        $precisionDecimal = config('product.precision.decimal');    // 小数精度(位)
+        $precisionInt = config('product_sku.precision.int');    // 整型精度(位)
+        $precisionDecimal = config('product_sku.precision.decimal');    // 小数精度(位)
 
         Schema::create('product_skus', function (Blueprint $table) use ($precisionInt, $precisionDecimal) {
             $table->bigIncrements('id');
-            $table->unsignedBigInteger('product_id')->comment('商品');
+            $table->unsignedBigInteger('product_id')->comment('所属商品');
             $table->unsignedDecimal('amount', $precisionInt, $precisionDecimal)->comment('金额');
-            $table->unsignedInteger('stock')->comment('库存');
-            $table->json('specs')->comment('属性规格 对应sku');
+            $table->unsignedInteger('stock_count')->comment('库存');
+            $table->json('specs')->comment('属性规格');
+//            $table->json('extra')->comment('额外内容');
             $table->timestamps();
         });
     }

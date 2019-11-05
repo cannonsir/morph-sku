@@ -1,14 +1,20 @@
-## 商品模块
-- product_categories 商品分类
-- products 商品
-- product_skus 商品sku
-- product_arrtibute_keys 商品sku属性键
-- product_arrtibute_values 商品sku属性值
+<div align="center"><h1>商品模块</h1></div>
+
+> 商品,sku业务逻辑模块
 
 
-## 订单相关
-> 独立封装?
-- sku_units 对应商品sku数量，涉及运输/促销/退货
-- adjustments 调整价格表,不确定性影响以上3张表,用于处理额外调整费用。运费等
-- shipment 运输信息
-- payment 支付信息
+### 安装
+**引入**
+```bash
+composer require gtd/product
+```
+
+**运行迁移**
+```bash
+php artisan migrate
+```
+
+### 使用
+
+**需要实现的接口:**
+- [ ] 远程服务拉取类目sku属性键值数据进行快速填充(淘宝)
