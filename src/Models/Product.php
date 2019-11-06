@@ -1,22 +1,36 @@
 <?php
 
-namespace Gtd\Product;
+namespace Gtd\Product\Models;
 
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
-class Product extends Model
+class Product extends Model implements \Gtd\Product\Contracts\Product
 {
     protected $guarded = ['id'];
 
     protected $casts = [
-        'main_pics' => 'array',
-        'on_sale' => 'bool'
+        'pics' => 'array',
+        'on_sale' => 'bool',
+        'total_stock_count' => 'int'
     ];
+
+    public function __construct(array $attributes = [])
+    {
+        parent::__construct($attributes);
+
+        $this->setTable(config('product_sku.table_names.product'));
+    }
 
     public function category(): BelongsTo
     {
         return $this->belongsTo(Category::class);
+    }
+
+    public function skus(): HasMany
+    {
+        return $this->hasMany(Sku::class);
     }
 
     /*

@@ -16,13 +16,16 @@ class CreateProductSkusTable extends Migration
         $precisionInt = config('product_sku.precision.int');    // 整型精度(位)
         $precisionDecimal = config('product_sku.precision.decimal');    // 小数精度(位)
 
-        Schema::create('product_skus', function (Blueprint $table) use ($precisionInt, $precisionDecimal) {
+        Schema::create(config('product_sku.table_names.sku'), function (Blueprint $table) use ($precisionInt, $precisionDecimal) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('product_id')->comment('所属商品');
             $table->unsignedDecimal('amount', $precisionInt, $precisionDecimal)->comment('金额');
             $table->unsignedInteger('stock_count')->comment('库存');
             $table->json('specs')->comment('属性规格');
-//            $table->json('extra')->comment('额外内容');
+            $specs = [
+                'attr1' => 'xx',
+                'attr2' => 'xx',
+            ];
             $table->timestamps();
         });
     }
@@ -34,6 +37,6 @@ class CreateProductSkusTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_skus');
+        Schema::dropIfExists(config('product_sku.table_names.sku'));
     }
 }

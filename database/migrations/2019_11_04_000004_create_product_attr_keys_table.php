@@ -14,14 +14,14 @@ class CreateProductAttrKeysTable extends Migration
     public function up()
     {
         // 属性表
-        Schema::create('product_attr_keys', function (Blueprint $table) {
+        Schema::create(config('product_sku.table_names.sku_attr_key'), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('category_id')->comment('所属分类');
             $table->string('name')->comment('属性名称');
             $table->boolean('required')->comment('是否必填');
             $table->enum('type', ['category', 'sku'])->comment('类目属性/sku属性');
-            // 可用于验证值规则,前端也好渲染输入组件
-            $table->enum('accept', ['单选', '数字', '字符串', '多选', '多选+自定义输入', '日期', '时间', '日期时间'])->comment('字段值类型');
+            $table->string('accept')->comment('字段值类型');
+            $table->text('default')->nullable()->comment('默认值');
             $table->string('unit')->nullable()->comment('单位');
             $table->string('tips')->nullable()->comment('提示');
             $table->timestamps();
@@ -35,6 +35,6 @@ class CreateProductAttrKeysTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_attr_keys');
+        Schema::dropIfExists(config('product_sku.table_names.sku_attr_key'));
     }
 }

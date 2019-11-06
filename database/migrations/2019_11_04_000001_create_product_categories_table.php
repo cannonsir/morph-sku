@@ -14,11 +14,12 @@ class CreateProductCategoriesTable extends Migration
     public function up()
     {
         // 商品分类表
-        Schema::create('product_categories', function (Blueprint $table) {
+        Schema::create(config('product_sku.table_names.category'), function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->unsignedBigInteger('parent_id')->nullable()->comment('父级分类');
             $table->string('name')->comment('分类名称');
             $table->unsignedInteger('order')->nullable()->comment('排序');
+            $table->boolean('customizable_attr')->comment('是否能够自定义属性键值对');
             $table->timestamps();
         });
     }
@@ -30,6 +31,6 @@ class CreateProductCategoriesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('product_categories');
+        Schema::dropIfExists(config('product_sku.table_names.category'));
     }
 }
