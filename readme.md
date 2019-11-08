@@ -16,12 +16,16 @@ php artisan migrate
 
 ### 使用
 
-**需要实现的接口:**
-- [ ] 新增分类
-- [ ] 删除分类
-- [ ] 新增sku属性
-- [ ] 新增sku属性值
-- [ ] 发布商品(包含sku)
-- [ ] 修改商品(包含sku)
 
-            // TODO 部分商品没有sku，咋整呢
+
+ sku键/值 都与sku表有关系，与产品表无关系，sku表最终只需要在键值的组合上给予价格和库存
+
+ 如果没有sku，下单对象就直接是产品，否则还是sku
+ 
+ 
+ ~~sku属性的值会影响其它shu属性~~
+ 
+ ```php
+$category = Category::first();
+$category->
+```

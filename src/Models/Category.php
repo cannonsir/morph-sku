@@ -10,11 +10,15 @@ class Category extends Model
 {
     protected $guarded = ['id'];
 
+    protected $casts = [
+        'customizable_attr' => 'bool'
+    ];
+
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('product_sku.table_names.category'));
+        $this->setTable(config('product_sku.table_names.categories'));
     }
 
     public function products(): HasMany
@@ -32,10 +36,8 @@ class Category extends Model
         return $this->belongsTo(self::class, 'parent_id');
     }
 
-    public function namePath()
+    public function attributes(): HasMany
     {
-        $parents = $this->parent()->with('parent')->get();
-
-        dd($parents);
+        return $this->hasMany(Attribute::class);
     }
 }

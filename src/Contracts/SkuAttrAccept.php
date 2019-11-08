@@ -5,32 +5,36 @@ namespace Gtd\Product\Contracts;
 interface SkuAttrAccept
 {
     /**
-     * 名称
+     * 获取值
      *
-     * @return string
+     * @param mixed $value
+     * @return mixed
      */
-    public static function getName():string;
+    public static function getter($value);
+
+    /**
+     * 设置值
+     *
+     * @param mixed $value
+     * @return mixed
+     */
+    public static function setter($value);
 
     /**
      * 输入值验证
      *
-     * @param $data mixed 数据
+     * @param mixed $value
      * @return bool
+     * @throws \Exception
      */
-    public function inputVerify($data): bool;
+    public static function inputVerify($value): bool;
 
     /**
      * 预设值验证(sku_value)
      *
-     * @param $data
+     * @param mixed $value
      * @return bool
+     * @throws \Exception
      */
-    public function presetVerify($data): bool;
-
-    /**
-     * 名称
-     *
-     * @return string 名称
-     */
-    public function __toString(): string ;
+    public static function presetVerify($value): bool;
 }

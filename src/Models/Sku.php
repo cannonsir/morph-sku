@@ -18,7 +18,7 @@ class Sku extends Model
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('product_sku.table_names.sku'));
+        $this->setTable(config('product_sku.table_names.skus'));
     }
 
     public static function create(array $attributes = [])

@@ -12,15 +12,18 @@ class Product extends Model implements \Gtd\Product\Contracts\Product
 
     protected $casts = [
         'pics' => 'array',
+        'category_id_path' => 'array',
+        'attribute_value' => 'array',
+        'custom_attribute_value' => 'array',
         'on_sale' => 'bool',
-        'total_stock_count' => 'int'
+        'stock_count' => 'int'
     ];
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('product_sku.table_names.product'));
+        $this->setTable(config('product_sku.table_names.products'));
     }
 
     public function category(): BelongsTo
@@ -49,5 +52,11 @@ class Product extends Model implements \Gtd\Product\Contracts\Product
     {
         $this->on_sale = false;
         $this->save();
+    }
+
+    // 是否包含某属性
+    public function containAttribute($attribute, $value)
+    {
+
     }
 }

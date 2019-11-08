@@ -4,8 +4,13 @@ namespace Gtd\Product\SkuAttrAccepts;
 
 class Str extends Accept
 {
-    public static function getName(): string
+    public static function getter($value)
     {
-        return \Str::snake(class_basename(self::class));
+        return (string) $value;
+    }
+
+    public static function setter($value)
+    {
+        return (string) $value;
     }
 }

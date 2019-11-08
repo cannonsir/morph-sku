@@ -2,6 +2,8 @@
 
 namespace Gtd\Product\Contracts;
 
+use Illuminate\Database\Eloquent\Relations\HasMany;
+
 interface Product
 {
     /**

@@ -3,38 +3,27 @@
 namespace Gtd\Product\SkuAttrAccepts;
 
 use Gtd\Product\Contracts\SkuAttrAccept;
+use Gtd\Product\Exceptions\AttributeValueVerifyFailed;
 
 abstract class Accept implements SkuAttrAccept
 {
-    public static function getName(): string
+    public static function getter($value)
     {
-        throw new \RuntimeException('Sku accepted name not set');
+        return $value;
     }
 
-    public function inputVerify($data): bool
+    public static function setter($value)
     {
-        return false;
+        return $value;
     }
 
-    public function presetVerify($data): bool
+    public static function inputVerify($value): bool
     {
-        return false;
+        return true;
     }
 
-    public function __toString(): string
+    public static function presetVerify($value): bool
     {
-        return static::getName();
-    }
-
-    public static function isAllow($acceptName): bool
-    {
-        foreach (config('product_sku.accepts') as $acceptClass) {
-            if ($acceptClass::getName() === $acceptName){
-                return true;
-                break;
-            }
-        }
-
-        return false;
+        return true;
     }
 }
