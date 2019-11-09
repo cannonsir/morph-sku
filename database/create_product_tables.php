@@ -10,29 +10,28 @@ class CreateProductTables extends Migration
     {
         // 分类
         Schema::create('categories', function (Blueprint $table) {
-
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('parent_id');
+            $table->string('name');
         });
-
-        // 品牌
-        Schema::create('brands', function (Blueprint $table) {
-
-        });
-
 
         // 产品
         Schema::create('products', function (Blueprint $table) {
-
+            // 标题 主图 详情 属性
+            $table->bigIncrements('id');
         });
 
         // sku
         Schema::create('skus', function (Blueprint $table) {
-
+            $table->decimal('amount');
+            $table->unsignedInteger('stock');
         });
 
         // sku 分类 -> 一对多 属性 更细致 同样的颜色属性可能在不同分类下有不同的属性值
         // 属性还有二次属性分类 展示
         Schema::create('attributes', function (Blueprint $table) {
-
+            // 是否可搜索
+            //
         });
 
         // sku

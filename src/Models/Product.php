@@ -59,4 +59,9 @@ class Product extends Model implements \Gtd\Product\Contracts\Product
     {
 
     }
+
+    public function attributes()
+    {
+        return $this->morphToMany('', '', '', '');
+    }
 }
