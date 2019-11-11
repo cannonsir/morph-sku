@@ -8,10 +8,6 @@ class Option extends Model implements \Gtd\Sku\Contracts\Option
 {
     protected $guarded = ['id'];
 
-    protected $casts = [
-        'is_sku' => 'bool'
-    ];
-
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
@@ -19,13 +15,7 @@ class Option extends Model implements \Gtd\Sku\Contracts\Option
         $this->setTable(config('sku.table_names.options'));
     }
 
-    public static function createForSku(array $attributes): self
-    {
-        $attributes['is_sku'] = true;
-        return static::create($attributes);
-    }
-
-    public static function findByName(string $name): self
+    public static function findByName(string $name)
     {
         return static::whereName($name)->first();
     }

@@ -18,7 +18,6 @@ class CreateSkuTables extends Migration
 
         Schema::create(config('sku.table_names.options'), function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->boolean('is_sku')->default(false);
             $table->string('name');
             $table->timestamps();
             $table->unique('name');

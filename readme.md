@@ -88,11 +88,6 @@ $product->attributes(); // 所有属性列表
 ```php
 $option = Option::create(['name' => '尺寸']);
 ```
-**创建SKU属性键**
-```php
-$skuOption = Option::create(['name' => '套餐', 'is_sku' => true]);
-$skuOption = Option::createForSku(['name' => '套餐']);
-```
 **新增商品参数属性**
 ```php
 $option = Option::create(['name' => '尺寸']);
