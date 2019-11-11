@@ -99,7 +99,7 @@ trait HasSku
 
     /**
      * 更新sku列表及载荷
-     *
+     * TODO 可用性及参数优化
      * @param \Closure $closure
      */
     public function updateSkuList(\Closure $closure)
@@ -107,16 +107,14 @@ trait HasSku
         // sku列表
         $list = [];
 
-        $func = function ($position, $payload) use(&$list) {
+        // 执行闭包，获取新sku列表
+        $closure(function ($position, $payload) use(&$list) {
             if ($position instanceof Attr) {
                 $position = $position->getKey();
             }
 
             $list[] = compact('position', 'payload');
-        };
-
-        // 执行闭包，获取新sku列表
-        $closure($func);
+        });
 
         DB::transaction(function () use ($list) {
             // 清空sku记录
