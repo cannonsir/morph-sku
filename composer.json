@@ -1,6 +1,6 @@
 {
-    "name": "gtd/product",
-    "description": "商品 sku",
+    "name": "gtd/morph-sku",
+    "description": "morph-sku",
     "type": "library",
     "authors": [
         {
@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Gtd\\Product\\ServiceProvider"
+                "Gtd\\Sku\\ServiceProvider"
             ]
         }
     },
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Gtd\\Product\\": "./src"
+            "Gtd\\Sku\\": "./src"
         }
     }
 }

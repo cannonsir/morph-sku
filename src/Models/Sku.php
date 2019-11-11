@@ -1,43 +1,35 @@
 <?php
 
-namespace Gtd\Product\Models;
+namespace Gtd\Sku\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Sku extends Model
+class Sku extends Model implements \Gtd\Sku\Contracts\Sku
 {
     protected $guarded = ['id'];
-
-    protected $casts = [
-        'specs' => 'array',
-        'stock_count' => 'int'
-    ];
 
     public function __construct(array $attributes = [])
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('product_sku.table_names.skus'));
+        $this->setTable(config('sku.table_names.skus'));
     }
 
-    public static function create(array $attributes = [])
+    public function producible(): MorphTo
     {
-        // TODO 创建sku时验证字段类型是否正确及值是否合法
-        if (isset($attributes['accept'])) {
-
-        }
-
-        return static::query()->create($attributes);
+        return $this->morphTo(config('sku.morph_name'));
     }
 
-    public function product(): BelongsTo
+    public function attrs(): BelongsToMany
     {
-        return $this->belongsTo(Product::class);
+        return $this->belongsToMany(config('sku.models.attr'));
     }
 
-    public static function accepts()
+    public function syncAttributes(...$attributes)
     {
-
+        //
     }
 }

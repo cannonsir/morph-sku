@@ -54,7 +54,7 @@ sku属性和参数属性都是属性。如何区分
 预设的属性值
 部分属性值可以自定义？？？
 
-- 有属性的模型 与 属性值 或 属性 多对多多态
+- 产品 与 属性值 或 属性 多对多多态
 id 
 has_attribute_id 
 has_attribute_type 拥有此属性的模型（产品或sku）
@@ -74,5 +74,39 @@ $product->attributes(); // 所有属性列表
 
 感觉商品部分不涉及，设计一个HasSku Trait来引用。此包主要设计sku
 
+
+
+
 ### 架构
 - 事件触发
+
+
+### 使用
+**引入Trait**
+
+**创建选项键**
+```php
+$option = Option::create(['name' => '尺寸']);
+```
+**创建SKU属性键**
+```php
+$skuOption = Option::create(['name' => '套餐', 'is_sku' => true]);
+$skuOption = Option::createForSku(['name' => '套餐']);
+```
+**新增商品参数属性**
+```php
+$option = Option::create(['name' => '尺寸']);
+// 批量新增属性值
+$product->addAttrValues($option, ['S', 'M', 'L']);
+```
+**新增商品sku**
+```php
+$product->skus()->create(['amount' => 5888, 'stock' => 999]);
+```
+**给商品sku分配属性键值对**
+```php
+// $sku = $product->skus()->first();
+// $attribute = $product->attributes()->first();
+
+TODO
+```

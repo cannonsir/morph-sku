@@ -1,9 +1,8 @@
 <?php
 
-namespace Gtd\Product\SkuAttrAccepts;
+namespace Gtd\Sku\SkuAttrAccepts;
 
-use Gtd\Product\Contracts\SkuAttrAccept;
-use Gtd\Product\Exceptions\AttributeValueVerifyFailed;
+use Gtd\Sku\Contracts\SkuAttrAccept;
 
 abstract class Accept implements SkuAttrAccept
 {

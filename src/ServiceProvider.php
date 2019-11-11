@@ -1,12 +1,12 @@
 <?php
 
-namespace Gtd\Product;
+namespace Gtd\Sku;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__.'/../config/product_sku.php', 'product_sku');
+        $this->mergeConfigFrom(__DIR__ . '/../config/sku.php', 'sku');
     }
 
     public function boot()
@@ -15,12 +15,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
             $this->publishes([
-                __DIR__.'/../config/product_sku.php' => config_path('product_sku.php')
-            ], 'product-sku-config');
+                __DIR__ . '/../config/sku.php' => config_path('sku.php')
+            ], 'sku-config');
 
             $this->publishes([
                 __DIR__.'/../database/migrations/' => database_path('migrations')
-            ], 'product-sku-migrations');
+            ], 'sku-migrations');
         }
     }
 }
