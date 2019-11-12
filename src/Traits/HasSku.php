@@ -2,13 +2,18 @@
 
 namespace Gtd\Sku\Traits;
 
-use Gtd\Sku\Contracts\Attr;
+use Gtd\Sku\Contracts\AttrContract;
 use Gtd\Sku\Contracts\Option;
+use Gtd\Sku\Contracts\OptionContract;
 use Gtd\Sku\Contracts\Sku;
+use Gtd\Sku\Contracts\SkuContract;
+use Gtd\Sku\SkuGenerate;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Collection;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 use Symfony\Component\Translation\Exception\NotFoundResourceException;
 
 trait HasSku
@@ -56,7 +61,7 @@ trait HasSku
      * @param $option
      * @return mixed
      */
-    protected function getStoredOption($option): Option
+    protected function getStoredOption($option): OptionContract
     {
         $optionModel = config('sku.models.option');
 
@@ -68,7 +73,7 @@ trait HasSku
             $option = $optionModel::firstOrCreate(['name' => $option]);
         }
 
-        if (! ($option instanceof Option)) {
+        if (! ($option instanceof OptionContract)) {
             throw (new ModelNotFoundException)->setModel($optionModel);
         }
 
@@ -114,7 +119,7 @@ trait HasSku
      * TODO 可用性及参数优化
      * @param \Closure $closure
      */
-    public function updateSkuList(\Closure $closure)
+    public function syncSku($closure)
     {
         // sku列表
         $list = [];
@@ -122,12 +127,14 @@ trait HasSku
         // 执行闭包，获取新sku列表
         $closure(function ($position, $payload) use(&$list) {
             // TODO 定位数据库存在验证如何确定
-            if ($position instanceof Attr) {
+            if ($position instanceof AttrContract) {
                 $position = $position->getKey();
             }
 
             $list[] = compact('position', 'payload');
         });
+
+        dd($list, 233);
 
         DB::transaction(function () use ($list) {
             // 清空sku记录
@@ -142,12 +149,85 @@ trait HasSku
     }
 
     /**
+     * sku 矩阵
+     */
+    public function skuMatrix()
+    {
+        $res = [
+            'option_id1' => [
+                ['id' => 1],
+                ['id' => 2],
+                ['id' => 3],
+            ],
+            'option_id2' => [
+                ['id' => 1],
+                ['id' => 2],
+                ['id' => 3],
+            ]
+        ];
+
+        $payload = [
+            'position' => [1, 1],
+            'payload' => ['amount', 'stock']
+        ];
+    }
+
+    public function syncSkus(SkuGenerate ...$skus)
+    {
+//        dd($skus);
+//
+        // position 可能直接是属性键值id
+        // TODO 最终需要属性键值id数组来attach sku
+        $positions = array_map(function (SkuGenerate $sku) {
+            return collect($sku->getPosition())->map(function ($value, $option_id) {
+                return compact('option_id', 'value');
+            });
+        }, $skus);
+
+        dd($positions);
+
+        // 验证定位属性键值存在于商品
+        $res = collect($skus)->map(function (SkuGenerate $sku) {
+            return collect($sku->getPosition())->map(function ($value, $option_id) {
+                return compact('option_id', 'value');
+            });
+        })
+            ->dd()
+        ->flatten(1)
+        ->unique()
+            ->dd()
+        ->groupBy('option_id')
+        ->every(function (Collection $values, $option_id) {
+            $values = $values->pluck('value');
+
+            $count = $this->attrs()->whereOptionId($option_id)->whereIn('value', $values)->count();
+
+            return $count >= $values->count();
+        });
+
+        // TODO 转换为属性键值id
+
+        dd($res, 666);
+
+        dd(66);
+        $positions = array_map(function (SkuGenerate $sku) {
+            return $sku->getPosition();
+        }, $skus);
+
+        collect($positions)->groupBy(function ($item) {
+            dd($item);
+        });
+
+        dd($positions);
+    }
+
+    /**
      * 设置sku
      *
      * @param array $position 属性值id定位，无顺序要求
      * @param array $payload 载荷，sku表额外数据
      */
-    public function setSku(array $position, $payload = [])
+    public function addSku(array $position, $payload = [])
     {
         //TODO 先查找定位，如果定位存在，更新定位载荷信息
         // 如果没有查找到定位，新增sku，attach属性值，写入payload
@@ -161,7 +241,7 @@ trait HasSku
      * 通过数组值id数组定位查找sku
      *
      * @param array $position
-     * @return null|Sku
+     * @return null|SkuContract
      */
     public function findSkuByPosition(array $position)
     {

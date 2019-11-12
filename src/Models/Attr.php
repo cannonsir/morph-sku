@@ -2,12 +2,13 @@
 
 namespace Gtd\Sku\Models;
 
+use Gtd\Sku\Contracts\AttrContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Attr extends Model implements \Gtd\Sku\Contracts\Attr
+class Attr extends Model implements AttrContract
 {
     protected $guarded = ['id'];
 

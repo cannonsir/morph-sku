@@ -2,12 +2,13 @@
 
 namespace Gtd\Sku\Models;
 
+use Gtd\Sku\Contracts\SkuContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
 
-class Sku extends Model implements \Gtd\Sku\Contracts\Sku
+class Sku extends Model implements SkuContract
 {
     protected $guarded = ['id'];
 
@@ -26,10 +27,5 @@ class Sku extends Model implements \Gtd\Sku\Contracts\Sku
     public function attrs(): BelongsToMany
     {
         return $this->belongsToMany(config('sku.models.attr'));
-    }
-
-    public function syncAttributes(...$attributes)
-    {
-        //
     }
 }

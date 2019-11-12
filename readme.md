@@ -99,9 +99,7 @@ $product->addAttrValues($option, ['S', 'M', 'L']);
 $product->skus()->create(['amount' => 5888, 'stock' => 999]);
 ```
 **给商品sku分配属性键值对**
+新增sku前需确保属性键值对已存在于产品
 ```php
-// $sku = $product->skus()->first();
-// $attribute = $product->attributes()->first();
 
-TODO
 ```

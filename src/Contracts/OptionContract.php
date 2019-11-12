@@ -4,7 +4,7 @@
 namespace Gtd\Sku\Contracts;
 
 
-interface Sku
+interface OptionContract
 {
 
 }
