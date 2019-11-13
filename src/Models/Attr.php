@@ -1,8 +1,8 @@
 <?php
 
-namespace Gtd\Sku\Models;
+namespace Gtd\MorphSku\Models;
 
-use Gtd\Sku\Contracts\AttrContract;
+use Gtd\MorphSku\Contracts\AttrContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
@@ -16,21 +16,21 @@ class Attr extends Model implements AttrContract
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('sku.table_names.attrs'));
+        $this->setTable(config('morph-sku.table_names.attrs'));
     }
 
     public function option(): BelongsTo
     {
-        return $this->belongsTo(config('sku.models.option'));
+        return $this->belongsTo(config('morph-sku.models.option'));
     }
 
     public function producible(): MorphTo
     {
-        return $this->morphTo(config('sku.morph_name'));
+        return $this->morphTo(config('morph-sku.morph_name'));
     }
 
     public function skus(): BelongsToMany
     {
-        return $this->belongsToMany(config('sku.models.sku'));
+        return $this->belongsToMany(config('morph-sku.models.sku'));
     }
 }

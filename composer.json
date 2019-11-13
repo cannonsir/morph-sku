@@ -11,7 +11,7 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Gtd\\Sku\\ServiceProvider"
+                "Gtd\\MorphSku\\ServiceProvider"
             ]
         }
     },
@@ -20,7 +20,7 @@
     },
     "autoload": {
         "psr-4": {
-            "Gtd\\Sku\\": "./src"
+            "Gtd\\MorphSku\\": "./src"
         }
     }
 }

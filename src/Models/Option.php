@@ -1,8 +1,8 @@
 <?php
 
-namespace Gtd\Sku\Models;
+namespace Gtd\MorphSku\Models;
 
-use Gtd\Sku\Contracts\OptionContract;
+use Gtd\MorphSku\Contracts\OptionContract;
 use Illuminate\Database\Eloquent\Model;
 
 class Option extends Model implements OptionContract
@@ -13,7 +13,7 @@ class Option extends Model implements OptionContract
     {
         parent::__construct($attributes);
 
-        $this->setTable(config('sku.table_names.options'));
+        $this->setTable(config('morph-sku.table_names.options'));
     }
 
     public static function findByName(string $name)

@@ -1,12 +1,9 @@
-<div align="center"><h1>商品模块</h1></div>
-
-> 商品,sku业务逻辑模块
-
-
+## morph-sku
+> 适用于Laravel的商品属性，SKU模块实现
 ### 安装
 **引入**
 ```bash
-composer require gtd/product
+composer require gtd/morph-sku
 ```
 
 **运行迁移**
@@ -14,92 +11,132 @@ composer require gtd/product
 php artisan migrate
 ```
 
-### 使用
+如果需要发布迁移及配置文件，请运行以下命令:
+- 配置文件
+```bash
 
-
-
- sku键/值 都与sku表有关系，与产品表无关系，sku表最终只需要在键值的组合上给予价格和库存
-
- 如果没有sku，下单对象就直接是产品，否则还是sku
- 
- 
- ~~sku属性的值会影响其它shu属性~~
- 
- ```php
-$category = Category::first();
-$category->
 ```
+- 迁移文件
+```bash
 
+```
 ### 数据结构
-- 分类
-商品与sku属性都要在某分类下
-
-- 商品
-商品包含标题，分类id，主图，详情，属性，sku信息
-
-- sku
-商品的sku
-sku为最小库存单位，是包含明确属性的
-部分商品如果没有sku？？？
-sku属性和参数属性都是属性。如何区分
-
-- 属性
-属性用于商品参数，sku选择。对属性值的类型有影响，
-部分属性只能用于参数展示
-属性可用于搜索商品, 可搜索字段应该由外部加上,属性值有部分可以自定义，自定义值的字段如何搜索,一般都是通过属性值id搜索
-属性需不需要加上类型字段, 感觉可以外部加上，不建议分成2张表，因为都可以被搜索
-部分分类下属性也可以自定义
-
-- 属性值
-预设的属性值
-部分属性值可以自定义？？？
-
-- 产品 与 属性值 或 属性 多对多多态
-id 
-has_attribute_id 
-has_attribute_type 拥有此属性的模型（产品或sku）
-其实拥有属性的好像都是产品，而sku只拥有产品的部分属性
-attribute_id 属性ID 
-attribute_value_id 可以为空，部分sku属性可以自定义值
-attribute_value sku属性自定义值内容
-
-有属性的模型：商品，sku
-部分商品没有sku，所以这样设计能够使商品独立拥有属性
-可以通过sku获取sku对应的属性列表，以及值
-应该可以实现搜索：
-某分类下颜色为xx的16GB机型
-select products category_id = xx join sku and sku.attribute_value_id=xx and attribute_value_id = 16gb
-
-$product->attributes(); // 所有属性列表
-
-感觉商品部分不涉及，设计一个HasSku Trait来引用。此包主要设计sku
-
-
-
-
-### 架构
-- 事件触发
-
+> 选项 属性键值 sku 属性键值-sku
 
 ### 使用
-**引入Trait**
+**在商品模型中引入`Gtd\Sku\Traits\HasSku`Trait**
 
-**创建选项键**
 ```php
-$option = Option::create(['name' => '尺寸']);
-```
-**新增商品参数属性**
-```php
-$option = Option::create(['name' => '尺寸']);
-// 批量新增属性值
-$product->addAttrValues($option, ['S', 'M', 'L']);
-```
-**新增商品sku**
-```php
-$product->skus()->create(['amount' => 5888, 'stock' => 999]);
-```
-**给商品sku分配属性键值对**
-新增sku前需确保属性键值对已存在于产品
-```php
+use Illuminate\Database\Eloquent\Model;
+use Gtd\Sku\Traits\HasSku;
 
+class Product extends Model
+{
+    use HasSku;
+}
+```
+
+**选项**
+> 各属性的键名
+```php
+// 创建选项
+$option = Option::create(['name' => '尺寸']);
+// 删除选项
+$option->delete();
+```
+
+**属性值**
+- 新增商品属性值  
+```php
+// 新增选项值
+$option = Option::create(['name' => '尺寸']);
+
+// 参数一需传递选项实例或id，传递字符串会自动创建, 参数二传递该属性的值
+$attrs = $product->addAttrValues($option, ['S', 'M', 'L']);
+$attrs = $product->addAttrValues('套餐', ['套餐一', '套餐二', '套餐三']);
+
+// 返回值$attrs为属性值集合
+```
+
+- 同步商品属性值
+```php
+$option = Option::first();
+$product->syncAttrValues($option, ['红色', '白色']);
+```
+
+- 获取商品属性值
+```php
+$attrs = $poduct->attrs;
+$attrs = $poduct->attrs()->get();
+```
+
+- 移除某选项及属性值
+```php
+$product->removeAttrValues($option);
+```
+
+**SKU**
+- 创建SKU
+> sku的属性组合是建立在产品基础属性值之上的，分配sku属性值组合前需添加产品属性值
+
+自定义创建与分配
+```php
+$sku = $product->skus()->create(['amount' => 5000, 'stock' => 100]);
+$sku->attrs()->attach([1, 2, 3]);   // 绑定产品属性值
+```
+
+通过属性值组合创建sku
+```php
+// 参数一传递属性值组合id数组，参数二传递sku表数据 返回新增
+$sku = $product->addSkuWithAttrs([1, 2, 3], ['amount' => 5000, 'stock' => 100]);
+```
+> 使用此方法创建会自动验证属性值是属于商品。所以更推荐使用
+
+- 获取SKU
+
+```php
+// 获取产品sku实例
+$product->skus()->get();
+// 获取产品sku矩阵
+$skuMatrix = $product->getSkuMatrixAttribute();
+// 产品携带sku矩阵
+$product->append('sku_matrix')->toArray();
+```
+
+- 删除SKU
+```php
+$sku->delete();
+$product->skus()->delete();
+```
+
+### 完整示例
+```php
+// 创建产品
+$product = Product::create(['title' => 'phone']);
+
+// 基础属性
+$product->addAttrValues('屏幕尺寸', ['5.5', '9.9', '4.4']);
+$product->addAttrValues('运营商', ['移动', '联通', '电信']);
+$product->addAttrValues('CPU型号', ['骁龙730G', '麒麟960', '联发科']);
+
+// 准备作为sku属性
+$colorAttrs = $product->addAttrValues('机身颜色', ['黑色', '白色']);
+$Capattrs = $product->addAttrValues('存储容量', ['6GB', '8GB', '12GB']);
+
+// 获取属性值实例
+$black = $colorAttrs->firstWhere('value', '黑色');
+$white = $colorAttrs->firstWhere('value', '白色');
+$sixGB = $Capattrs->firstWhere('value', '6GB');
+$eightGB = $Capattrs->firstWhere('value', '8GB');
+
+// 组合属性值，建立sku
+$product->addSkuWithAttrs([$black, $sixGB], ['amount' => 6000, 'stock' => 100]);
+$product->addSkuWithAttrs([$black, $eightGB], ['amount' => 8000, 'stock' => 100]);
+$product->addSkuWithAttrs([$white, $sixGB], ['amount' => 6666, 'stock' => 100]);
+$product->addSkuWithAttrs([$white, $eightGB], ['amount' => 8888, 'stock' => 100]);
+
+// 获取产品sku矩阵
+$skuMatrix = $product->getSkuMatrixAttribute();
+// 产品携带sku矩阵
+$product->append('sku_matrix')->toArray();
 ```

@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\Sku;
+namespace Gtd\MorphSku;
 
 class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
@@ -15,12 +15,12 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
             $this->publishes([
-                __DIR__ . '/../config/sku.php' => config_path('sku.php')
-            ], 'sku-config');
+                __DIR__ . '/../config/sku.php' => config_path('morph-sku.php')
+            ], 'morph-sku-config');
 
             $this->publishes([
                 __DIR__.'/../database/migrations/' => database_path('migrations')
-            ], 'sku-migrations');
+            ], 'morph-sku-migrations');
         }
     }
 }

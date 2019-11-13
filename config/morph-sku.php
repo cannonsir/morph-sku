@@ -3,13 +3,13 @@
 return [
     'models' => [
         // 商品sku
-        'sku' => \Gtd\Sku\Models\Sku::class,
+        'sku' => \Gtd\MorphSku\Models\Sku::class,
 
         // 选项
-        'option' => \Gtd\Sku\Models\Option::class,
+        'option' => \Gtd\MorphSku\Models\Option::class,
 
         // 属性
-        'attr' => \Gtd\Sku\Models\Attr::class,
+        'attr' => \Gtd\MorphSku\Models\Attr::class,
     ],
 
     // 表名
@@ -23,6 +23,7 @@ return [
         // 属性键值
         'attrs' => 'attrs',
 
+        // 属性值与sku 中间表
         'attr_sku' => 'attr_sku',
     ],
 
