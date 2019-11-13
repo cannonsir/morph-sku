@@ -6,7 +6,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
 {
     public function register()
     {
-        $this->mergeConfigFrom(__DIR__ . '/../config/sku.php', 'sku');
+        $this->mergeConfigFrom(__DIR__ . '/../config/morph-sku.php', 'morph-sku');
     }
 
     public function boot()
@@ -15,7 +15,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             $this->loadMigrationsFrom(__DIR__.'/../database/migrations');
 
             $this->publishes([
-                __DIR__ . '/../config/sku.php' => config_path('morph-sku.php')
+                __DIR__ . '/../config/morph-sku.php' => config_path('morph-sku.php')
             ], 'morph-sku-config');
 
             $this->publishes([

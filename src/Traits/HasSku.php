@@ -19,7 +19,7 @@ trait HasSku
     public function skus(): MorphMany
     {
         // sku列表，及每条sku对应属性键值列表，价格，库存
-        return $this->morphMany(config('morph-sku.models.sku'), config('sku.morph_name'));
+        return $this->morphMany(config('morph-sku.models.sku'), config('morph-sku.morph_name'));
     }
 
     /**
