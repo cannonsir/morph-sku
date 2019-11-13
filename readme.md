@@ -1,5 +1,7 @@
 ## morph-sku
+
 > 适用于Laravel的商品属性，SKU模块实现
+
 ### 安装
 **引入**
 ```bash
@@ -20,6 +22,7 @@ php artisan vendor:publish --tag=morph-sku-config
 ```bash
 php artisan vendor:publish --tag=morph-sku-migrations
 ```
+
 ### 数据结构
 > 选项 属性键值 sku 属性键值-sku
 
@@ -37,7 +40,9 @@ class Product extends Model
 ```
 
 **选项**
+
 > 各属性的键名
+
 ```php
 // 创建选项
 $option = Option::create(['name' => '尺寸']);
@@ -46,7 +51,9 @@ $option->delete();
 ```
 
 **属性值**
+
 - 新增商品属性值  
+
 ```php
 // 新增选项值
 $option = Option::create(['name' => '尺寸']);
@@ -59,37 +66,45 @@ $attrs = $product->addAttrValues('套餐', ['套餐一', '套餐二', '套餐三
 ```
 
 - 同步商品属性值
+
 ```php
 $option = Option::first();
 $product->syncAttrValues($option, ['红色', '白色']);
 ```
 
 - 获取商品属性值
+
 ```php
 $attrs = $poduct->attrs;
 $attrs = $poduct->attrs()->get();
 ```
 
 - 移除某选项及属性值
+
 ```php
 $product->removeAttrValues($option);
 ```
 
 **SKU**
+
 - 创建SKU
+
 > sku的属性组合是建立在产品基础属性值之上的，分配sku属性值组合前需添加产品属性值
 
 自定义创建与分配
+
 ```php
 $sku = $product->skus()->create(['amount' => 5000, 'stock' => 100]);
 $sku->attrs()->attach([1, 2, 3]);   // 绑定产品属性值
 ```
 
 通过属性值组合创建sku
+
 ```php
 // 参数一传递属性值组合id数组，参数二传递sku表数据 返回新增
 $sku = $product->addSkuWithAttrs([1, 2, 3], ['amount' => 5000, 'stock' => 100]);
 ```
+
 > 使用此方法创建会自动验证属性值是属于商品。所以更推荐使用
 
 - 获取SKU
