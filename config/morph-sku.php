@@ -27,5 +27,6 @@ return [
         'attr_sku' => 'attr_sku',
     ],
 
+    // 与商品多态关联名称
     'morph_name' => 'producible'
 ];

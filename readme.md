@@ -14,11 +14,11 @@ php artisan migrate
 如果需要发布迁移及配置文件，请运行以下命令:
 - 配置文件
 ```bash
-
+php artisan vendor:publish --tag=morph-sku-config
 ```
 - 迁移文件
 ```bash
-
+php artisan vendor:publish --tag=morph-sku-migrations
 ```
 ### 数据结构
 > 选项 属性键值 sku 属性键值-sku
