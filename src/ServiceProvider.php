@@ -20,7 +20,7 @@ class ServiceProvider extends \Illuminate\Support\ServiceProvider
             ], 'morph-sku-config');
 
             $this->publishes([
-                __DIR__.'/../database/migrations/create_morph_sku_tables.php' => $this->getMigrationFileName()
+                __DIR__.'/../database/migrations/create_morph_sku_tables.php.stub' => $this->getMigrationFileName()
             ], 'morph-sku-migrations');
         }
     }
