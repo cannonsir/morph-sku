@@ -53,6 +53,7 @@ class Product extends Model
 > 各属性的键名
 
 ```php
+use Gtd\MorphSku\Models\Option;
 // 创建选项
 $option = Option::create(['name' => '尺寸']);
 // 删除选项
@@ -119,6 +120,7 @@ $sku = $product->addSkuWithAttrs([1, 2, 3], ['amount' => 5000, 'stock' => 100]);
 - 获取SKU
 
 ```php
+use Gtd\MorphSku\Models\Sku;
 // 通过属性值组合获取sku
 $sku = Sku::findByPosition($attr1, $attr2);
 // 获取产品sku实例
