@@ -8,7 +8,9 @@ class CreateMorphSkuTables extends Migration
 {
     public function up()
     {
-        Schema::create(config('morph-sku.table_names.skus'), function (Blueprint $table) {
+        $tableNames = config('morph-sku.table_names');
+
+        Schema::create($tableNames['skus'], function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('producible');
             $table->decimal('amount');
@@ -16,14 +18,13 @@ class CreateMorphSkuTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create(config('morph-sku.table_names.options'), function (Blueprint $table) {
+        Schema::create($tableNames['options'], function (Blueprint $table) {
             $table->bigIncrements('id');
-            $table->string('name');
+            $table->string('name')->unique();
             $table->timestamps();
-            $table->unique('name');
         });
 
-        Schema::create(config('morph-sku.table_names.attrs'), function (Blueprint $table) {
+        Schema::create($tableNames['attrs'], function (Blueprint $table) {
             $table->bigIncrements('id');
             $table->morphs('producible');
             $table->unsignedBigInteger('option_id')->index();
@@ -31,18 +32,20 @@ class CreateMorphSkuTables extends Migration
             $table->timestamps();
         });
 
-        Schema::create(config('morph-sku.table_names.attr_sku'), function (Blueprint $table) {
-            $table->unsignedBigInteger('sku_id');
-            $table->unsignedBigInteger('attr_id');
+        Schema::create($tableNames['attr_sku'], function (Blueprint $table) {
+            $table->unsignedBigInteger('sku_id')->index();
+            $table->unsignedBigInteger('attr_id')->index();
             $table->unique(['sku_id', 'attr_id']);
         });
     }
 
     public function down()
     {
-        Schema::dropIfExists(config('morph-sku.table_names.skus'));
-        Schema::dropIfExists(config('morph-sku.table_names.options'));
-        Schema::dropIfExists(config('morph-sku.table_names.attrs'));
-        Schema::dropIfExists(config('morph-sku.table_names.attr_sku'));
+        $tableNames = config('morph-sku.table_names');
+
+        Schema::dropIfExists($tableNames['skus']);
+        Schema::dropIfExists($tableNames['options']);
+        Schema::dropIfExists($tableNames['attrs']);
+        Schema::dropIfExists($tableNames['attr_sku']);
     }
 }
