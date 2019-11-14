@@ -2,8 +2,10 @@
 
 namespace Gtd\MorphSku\Models;
 
+use function Couchbase\defaultDecoder;
 use Gtd\MorphSku\Contracts\AttrContract;
 use Gtd\MorphSku\Contracts\SkuContract;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -51,6 +53,29 @@ class Sku extends Model implements SkuContract
         $attrs->isEmpty()
             ? $this->attrs()->detach()
             : $this->attrs()->detach($attrs);
+    }
+
+    public static function findByPosition(...$position)
+    {
+        $position = collect($position)->flatten()->map(function ($val) {
+            if (is_string($val) || is_numeric($val)) {
+                return $val;
+            }
+
+            if ($val instanceof AttrContract) {
+                return $val->getKey();
+            }
+
+            throw new \InvalidArgumentException('属性值无效');
+        })->toArray();
+
+        if (empty($position)) {
+            throw new \InvalidArgumentException('未传递属性值');
+        }
+
+        return static::whereHas('attrs', function (Builder $builder) use ($position) {
+            $builder->whereRaw(sprintf('attr_sku.attr_id IN (%s)', implode(',', $position)));
+        }, '=', count($position))->first();
     }
 
     /**

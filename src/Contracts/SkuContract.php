@@ -44,4 +44,12 @@ interface SkuContract
      * @return mixed
      */
     public function removeAttrs(...$attrs);
+
+    /**
+     * 通过属性值组合查询sku实例
+     *
+     * @param array $position
+     * @return mixed
+     */
+    public static function findByPosition(...$position);
 }

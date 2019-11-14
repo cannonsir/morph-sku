@@ -3,30 +3,39 @@
 > 适用于Laravel的商品属性，SKU模块实现
 
 ### 安装
+
 **引入**
+
 ```bash
 composer require gtd/morph-sku
 ```
 
 **运行迁移**
+
 ```bash
 php artisan migrate
 ```
 
 如果需要发布迁移及配置文件，请运行以下命令:
+
 - 配置文件
+
 ```bash
 php artisan vendor:publish --tag=morph-sku-config
 ```
+
 - 迁移文件
+
 ```bash
 php artisan vendor:publish --tag=morph-sku-migrations
 ```
 
 ### 数据结构
+
 > 选项 属性键值 sku 属性键值-sku
 
 ### 使用
+
 **在商品模型中引入`Gtd\Sku\Traits\HasSku`Trait**
 
 ```php
@@ -110,6 +119,8 @@ $sku = $product->addSkuWithAttrs([1, 2, 3], ['amount' => 5000, 'stock' => 100]);
 - 获取SKU
 
 ```php
+// 通过属性值组合获取sku
+$sku = Sku::findByPosition($attr1, $attr2);
 // 获取产品sku实例
 $product->skus()->get();
 // 获取产品sku矩阵
@@ -119,6 +130,7 @@ $product->append('sku_matrix')->toArray();
 ```
 
 - 删除SKU
+
 ```php
 $sku->delete();
 $product->skus()->delete();

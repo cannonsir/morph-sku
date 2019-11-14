@@ -5,6 +5,8 @@ namespace Gtd\MorphSku\Traits;
 use Gtd\MorphSku\Contracts\AttrContract;
 use Gtd\MorphSku\Contracts\OptionContract;
 use Gtd\MorphSku\Contracts\SkuContract;
+use Gtd\MorphSku\Models\Sku;
+use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Facades\DB;
@@ -144,14 +146,7 @@ trait HasSku
         }
 
         // 该组合是否已经存在
-        $exists = !$this->skus()->select('id')->with('attrs:id')->get()->every(function ($sku) use ($attr_ids) {
-            $position = $sku->attrs->pluck('id')->toArray();
-            sort($position);
-            sort($attr_ids);
-            return $position !== $attr_ids;
-        });
-
-        if ($exists) {
+        if (!is_null(Sku::findByPosition($attr_ids))) {
             throw new \InvalidArgumentException('属性值组合已存在');
         }
 
