@@ -34,11 +34,11 @@ php artisan vendor:publish --tag=morph-sku-config
 
 ### 使用
 
-**在商品模型中引入`Gtd\Sku\Traits\HasSku`Trait**
+**在商品模型中引入`Gtd\MorphSku\Traits\HasSku`Trait**
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Gtd\Sku\Traits\HasSku;
+use Gtd\MorphSku\Traits\HasSku;
 
 class Product extends Model
 {
@@ -51,6 +51,7 @@ class Product extends Model
 > 各属性的键名
 
 ```php
+use Gtd\MorphSku\Models\Option;
 // 创建选项
 $option = Option::create(['name' => '尺寸']);
 // 删除选项
@@ -117,6 +118,7 @@ $sku = $product->addSkuWithAttrs([1, 2, 3], ['amount' => 5000, 'stock' => 100]);
 - 获取SKU
 
 ```php
+use Gtd\MorphSku\Models\Sku;
 // 通过属性值组合获取sku
 $sku = Sku::findByPosition($attr1, $attr2);
 // 获取产品sku实例
@@ -160,6 +162,8 @@ $product->addSkuWithAttrs([$black, $eightGB], ['amount' => 8000, 'stock' => 100]
 $product->addSkuWithAttrs([$white, $sixGB], ['amount' => 6666, 'stock' => 100]);
 $product->addSkuWithAttrs([$white, $eightGB], ['amount' => 8888, 'stock' => 100]);
 
+// 获取产品sku列表
+$skus = $product->skus()->get();
 // 获取产品sku矩阵
 $skuMatrix = $product->getSkuMatrixAttribute();
 // 产品携带sku矩阵
