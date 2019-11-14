@@ -36,11 +36,11 @@ php artisan vendor:publish --tag=morph-sku-migrations
 
 ### 使用
 
-**在商品模型中引入`Gtd\Sku\Traits\HasSku`Trait**
+**在商品模型中引入`Gtd\MorphSku\Traits\HasSku`Trait**
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Gtd\Sku\Traits\HasSku;
+use Gtd\MorphSku\Traits\HasSku;
 
 class Product extends Model
 {
@@ -162,6 +162,8 @@ $product->addSkuWithAttrs([$black, $eightGB], ['amount' => 8000, 'stock' => 100]
 $product->addSkuWithAttrs([$white, $sixGB], ['amount' => 6666, 'stock' => 100]);
 $product->addSkuWithAttrs([$white, $eightGB], ['amount' => 8888, 'stock' => 100]);
 
+// 获取产品sku列表
+$skus = $product->skus()->get();
 // 获取产品sku矩阵
 $skuMatrix = $product->getSkuMatrixAttribute();
 // 产品携带sku矩阵
