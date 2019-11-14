@@ -10,24 +10,22 @@
 composer require gtd/morph-sku
 ```
 
+**发布迁移文件**
+
+```bash
+php artisan vendor:publish --tag=morph-sku-migrations
+```
+
 **运行迁移**
 
 ```bash
 php artisan migrate
 ```
 
-如果需要发布迁移及配置文件，请运行以下命令:
-
-- 配置文件
+如果需要发布配置文件，请运行以下命令:
 
 ```bash
 php artisan vendor:publish --tag=morph-sku-config
-```
-
-- 迁移文件
-
-```bash
-php artisan vendor:publish --tag=morph-sku-migrations
 ```
 
 ### 数据结构
