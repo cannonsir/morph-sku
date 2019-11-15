@@ -29,7 +29,7 @@ class Sku extends Model implements SkuContract
 
     public function attrs(): BelongsToMany
     {
-        return $this->belongsToMany(config('morph-sku.models.attr'));
+        return $this->belongsToMany(config('morph-sku.models.attr'), config('morph-sku.table_names.attr_sku'));
     }
 
     public function syncAttrs(...$attrs)
@@ -74,7 +74,8 @@ class Sku extends Model implements SkuContract
         }
 
         return static::whereHas('attrs', function (Builder $builder) use ($position) {
-            $builder->whereRaw(sprintf('attr_sku.attr_id IN (%s)', implode(',', $position)));
+            $attr_sku_table = config('morph-sku.table_names.attr_sku');
+            $builder->whereRaw(sprintf('%s.attr_id IN (%s)', $attr_sku_table, implode(',', $position)));
         }, '=', count($position))->first();
     }
 

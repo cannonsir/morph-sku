@@ -31,6 +31,6 @@ class Attr extends Model implements AttrContract
 
     public function skus(): BelongsToMany
     {
-        return $this->belongsToMany(config('morph-sku.models.sku'));
+        return $this->belongsToMany(config('morph-sku.models.sku'), config('morph-sku.table_names.attr_sku'));
     }
 }
