@@ -33,17 +33,22 @@ return [
         /*
          * sku模型，需实现 Gtd\MorphSku\Contracts\SkuContract
          */
-        'sku' => \Gtd\MorphSku\Models\Sku::class,
+        'Sku' => \Gtd\MorphSku\Models\Sku::class,
 
         /*
          * 选项模型，需实现 Gtd\MorphSku\Contracts\OptionContract
          */
-        'option' => \Gtd\MorphSku\Models\Option::class,
+        'Option' => \Gtd\MorphSku\Models\Option::class,
 
         /*
          * 属性值模型,需实现 Gtd\MorphSku\Contracts\AttrContract
          */
-        'attr' => \Gtd\MorphSku\Models\Attr::class,
+        'Attr' => \Gtd\MorphSku\Models\Attr::class,
+
+        /*
+         * 属性与SKU多对多中间模型
+         */
+        'AttrSku' => \Gtd\MorphSku\Models\AttrSku::class,
     ],
 
     /*

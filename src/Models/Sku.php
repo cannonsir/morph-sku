@@ -29,7 +29,10 @@ class Sku extends Model implements SkuContract
 
     public function attrs(): BelongsToMany
     {
-        return $this->belongsToMany(config('morph-sku.models.attr'), config('morph-sku.table_names.attr_sku'));
+        return $this->belongsToMany(
+            config('morph-sku.models.Attr'),
+            config('morph-sku.table_names.attr_sku')
+        )->using(config('morph-sku.models.AttrSku'));
     }
 
     public function syncAttrs(...$attrs)
@@ -57,21 +60,21 @@ class Sku extends Model implements SkuContract
 
     public static function findByPosition(...$position)
     {
-        $position = collect($position)->flatten()->map(function ($val) {
-            if (is_string($val) || is_numeric($val)) {
-                return $val;
-            }
+        $position = collect($position)
+            ->flatten()
+            ->map(function ($val) {
+                if (is_numeric($val) || is_string($val)) {
+                    return $val;
+                }
 
-            if ($val instanceof AttrContract) {
-                return $val->getKey();
-            }
+                if ($val instanceof AttrContract) {
+                    return $val->getKey();
+                }
 
-            throw new \InvalidArgumentException('属性值无效');
-        })->toArray();
-
-        if (empty($position)) {
-            throw new \InvalidArgumentException('未传递属性值');
-        }
+                throw new \InvalidArgumentException('Invalid attribute value');
+            })
+            ->unique()
+            ->toArray();
 
         return static::whereHas('attrs', function (Builder $builder) use ($position) {
             $attr_sku_table = config('morph-sku.table_names.attr_sku');
@@ -107,7 +110,7 @@ class Sku extends Model implements SkuContract
     protected function getStoredAttr($attr): AttrContract
     {
         if (is_numeric($attr)) {
-            $attrModel = config('morph-sku.models.attr');
+            $attrModel = config('morph-sku.models.Attr');
             $attr = $attrModel::findOrFail($attr);
         }
 

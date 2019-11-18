@@ -5,6 +5,7 @@ namespace Gtd\MorphSku\Traits;
 use Gtd\MorphSku\Contracts\AttrContract;
 use Gtd\MorphSku\Contracts\OptionContract;
 use Gtd\MorphSku\Contracts\SkuContract;
+use Gtd\MorphSku\Models\Attr;
 use Gtd\MorphSku\Models\Sku;
 use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -14,48 +15,24 @@ use Illuminate\Support\Facades\DB;
 trait HasSku
 {
     /**
-     * 获取sku
+     * 属性值
+     *
+     * @return MorphMany
+     */
+    public function attrs(): MorphMany
+    {
+        return $this->morphMany(config('morph-sku.models.Attr'), config('morph-sku.morph_name'));
+    }
+
+    /**
+     * SKU
      *
      * @return MorphMany
      */
     public function skus(): MorphMany
     {
         // sku列表，及每条sku对应属性键值列表，价格，库存
-        return $this->morphMany(config('morph-sku.models.sku'), config('morph-sku.morph_name'));
-    }
-
-    /**
-     * 获取属性
-     *
-     * @return MorphMany
-     */
-    public function attrs(): MorphMany
-    {
-        return $this->morphMany(config('morph-sku.models.attr'), config('morph-sku.morph_name'));
-    }
-
-    /**
-     * 添加属性值
-     *
-     * @param Option $option
-     * @param mixed ...$values
-     * @return iterable
-     */
-    public function addAttrValues($option, ...$values)
-    {
-        $option = $this->findOrCreateOption($option);
-
-        $values = collect($values)->flatten()->map(function ($value) use ($option) {
-            $attribute_class = config('morph-sku.models.attr');
-            $option_id = $option->getKey();
-            return new $attribute_class(compact('option_id', 'value'));
-        });
-
-        if ($values->isEmpty()) {
-            throw new \InvalidArgumentException('Values cannot be empty');
-        }
-
-        return $this->attrs()->saveMany($values);
+        return $this->morphMany(config('morph-sku.models.Sku'), config('morph-sku.morph_name'));
     }
 
     /**
@@ -80,7 +57,7 @@ trait HasSku
     }
 
     /**
-     * 移除某选项及属性值
+     * 移除商品的某选项的对应属性值
      *
      * @param $option
      * @return mixed
@@ -89,68 +66,87 @@ trait HasSku
     {
         $option = $this->findOrCreateOption($option);
 
-        return $this->attrs()->where($option->getKeyName(), $option->getKey())->delete();
+        return $this->attrs()->where('option_id', $option->getKey())->delete();
     }
 
     /**
-     * 通过属性值新增sku
+     * 添加属性值
      *
-     * @param array $attrs
-     * @param array $payload
-     * @return SkuContract
+     * @param Option $option
+     * @param mixed ...$values
+     * @return iterable
      */
-    public function addSkuWithAttrs(array $attrs, array $payload): SkuContract
+    public function addAttrValues($option, ...$values)
     {
-        $attr_ids = $this->parseAndVerifyPosition($attrs);
+        if (empty($values)) {
+            throw new \InvalidArgumentException('Values cannot be empty');
+        }
 
-        $sku = $this->skus()->create($payload);
-        $sku->attrs()->attach($attr_ids);
+        $option = $this->findOrCreateOption($option);
 
-        return $sku;
+        $values = collect($values)->flatten()->map(function ($value) use ($option) {
+            $attribute_class = config('morph-sku.models.Attr');
+            $option_id = $option->getKey();
+            return new $attribute_class(compact('option_id', 'value'));
+        });
+
+        return $this->attrs()->saveMany($values);
     }
 
     /**
-     * 解析属性值组合为id，并验证属性值组合存在，重复，合法性
+     * 通过属性值组合更新或创建sku
      *
      * @param array $position
-     * @return array
+     * @param array $payload
      */
-    protected function parseAndVerifyPosition(array $position): array
+    public function updateOrCreateSkuByPosition(array $position, array $payload)
     {
-        $attr_ids = array_map(function ($val) {
-            if ($val instanceof AttrContract) {
-                $val = $val->getKey();
+        // 验证属性值不能为空
+        if (empty($position)) {
+            throw new \InvalidArgumentException('Positioning is empty');
+        }
+
+        // 解析属性值为属性值id数组
+        $position = array_map(function ($point) {
+            if (is_numeric($point) || is_string($point)) {
+                return $point;
             }
 
-            if (!is_string($val) && !is_numeric($val)) {
-                throw new \InvalidArgumentException('参数非法');
+            if ($point instanceof AttrContract) {
+                return $point->getKey();
             }
 
-            return $val;
+            throw new \InvalidArgumentException("Invalid attribute value");
         }, $position);
 
-        if (count($attr_ids) !== count(array_unique($attr_ids))) {
-            throw new \InvalidArgumentException('属性值重复');
+        // 验证属性值重复
+        if (count($position) !== count(array_unique($position))) {
+            throw new \InvalidArgumentException('Duplicate attribute value');
         }
 
-        $attrModel = config('morph-sku.models.attr');
-        $option_ids = $this->attrs()->whereIn((new $attrModel)->getKeyName(), $attr_ids)->pluck('option_id')->toArray();
+        $attrModel = config('morph-sku.models.Attr');
+        // 各属性值的选项id
+        $option_ids = $this->attrs()
+            ->whereIn((new $attrModel)->getKeyName(), $position)
+            ->pluck('option_id')
+            ->toArray();
 
-        // 验证产品属性值存在
-        if (count($attr_ids) !== count($option_ids)) {
-            throw new \InvalidArgumentException('产品属性值不存在');
+        // 验证此商品下存在此属性值
+        if (count($position) !== count($option_ids)) {
+            throw new \InvalidArgumentException('The attribute value under this item does not exist');
         }
 
+        // 验证同一SKU下的属性值的选项名称不重复
         if (count($option_ids) !== count(array_unique($option_ids))) {
-            throw  new \InvalidArgumentException('同选项值重复');
+            throw  new \InvalidArgumentException('Duplicate options for attribute values ​​under the same SKU');
         }
 
-        // 该组合是否已经存在
-        if (!is_null(Sku::findByPosition($attr_ids))) {
-            throw new \InvalidArgumentException('属性值组合已存在');
+        // 如果SKU存在则更新，否则创建
+        if ($sku = Sku::findByPosition($position)) {
+            $sku->update($payload);
+        } else {
+            $this->skus()->create($payload)->attrs()->sync($position);
         }
-
-        return $attr_ids;
     }
 
     /**
@@ -161,7 +157,7 @@ trait HasSku
      */
     protected function findOrCreateOption($option): OptionContract
     {
-        $optionModel = config('morph-sku.models.option');
+        $optionModel = config('morph-sku.models.Option');
 
         if (is_numeric($option)) {
             $option = $optionModel::findOrFail($option);
@@ -176,29 +172,5 @@ trait HasSku
         }
 
         return $option;
-    }
-
-    /**
-     * 访问器：获取sku矩阵
-     */
-    public function getSkuMatrixAttribute()
-    {
-        return $this->skus()
-            ->with('attrs.option:id,name', 'attrs:id,option_id,value')
-            ->get()
-            ->transform(function (SkuContract $sku) {
-                $sku = $sku->toArray();
-                $sku['attrs'] = array_map(function ($attr) {
-                    return [
-                        'id' => $attr['id'],
-                        'value' => $attr['value'],
-                        'option_id' => $attr['option_id'],
-                        'option' => $attr['option']['name'],
-                    ];
-                }, $sku['attrs']);
-
-                return $sku;
-            })
-            ->toArray();
     }
 }
