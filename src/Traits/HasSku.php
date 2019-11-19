@@ -4,12 +4,10 @@ namespace Gtd\MorphSku\Traits;
 
 use Gtd\MorphSku\Contracts\AttrContract;
 use Gtd\MorphSku\Contracts\OptionContract;
-use Gtd\MorphSku\Contracts\SkuContract;
-use Gtd\MorphSku\Models\Attr;
 use Gtd\MorphSku\Models\Sku;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\DB;
 
 trait HasSku
@@ -37,23 +35,42 @@ trait HasSku
 
     /**
      * 同步属性值
-     *
-     * @param Option $option
+     * 
+     * @param $option
      * @param mixed ...$values
-     * @return iterable
-     * @throws \Exception
      */
     public function syncAttrValues($option, ...$values)
     {
-        DB::transaction(function () use (&$res, $option, $values) {
-            $option = $this->findOrCreateOption($option);
+        $option_id = $this->findOrCreateOption($option)->getKey();
+        $values = Arr::flatten($values);
 
-            $this->removeAttrValues($option);
+        // 已存在指定values的属性值
+        $has = $this->attrs()
+            ->where('option_id', $option_id)
+            ->whereIn('value', $values)
+            ->get();
 
-            $res = $this->addAttrValues($option, ...$values);
+        $attrClass = config('morph-sku.models.Attr');
+        $attrModelKeyName = (new $attrClass)->getKeyName();
+
+        $newAttrs = [];
+        foreach ($values as $value) {
+            // 不存在的新值写入新增数组
+            if (is_null($has->firstWhere('value', $value))) {
+                $newAttrs[] = new $attrClass(compact('option_id', 'value'));
+            }
+        }
+
+        DB::transaction(function () use ($option_id, $attrModelKeyName, $has, $newAttrs) {
+            // 删除其它
+            $this->attrs()
+                ->where('option_id', $option_id)
+                ->whereNotIn($attrModelKeyName, $has->pluck($attrModelKeyName))
+                ->delete();
+
+            // 保存新增
+            $this->attrs()->saveMany($newAttrs);
         });
-
-        return $res;
     }
 
     /**
@@ -141,12 +158,17 @@ trait HasSku
             throw  new \InvalidArgumentException('Duplicate options for attribute values ​​under the same SKU');
         }
 
+        $sku = Sku::findByPosition($position);
+
         // 如果SKU存在则更新，否则创建
-        if ($sku = Sku::findByPosition($position)) {
-            $sku->update($payload);
+        if (is_null($sku)) {
+            $sku = $this->skus()->create($payload);
+            $sku->attrs()->sync($position);
         } else {
-            $this->skus()->create($payload)->attrs()->sync($position);
+            $sku->update($payload);
         }
+
+        return $sku;
     }
 
     /**

@@ -2,10 +2,8 @@
 
 namespace Gtd\MorphSku\Models;
 
-use function Couchbase\defaultDecoder;
 use Gtd\MorphSku\Contracts\AttrContract;
 use Gtd\MorphSku\Contracts\SkuContract;
-use Illuminate\Database\Eloquent\Builder;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
@@ -76,10 +74,20 @@ class Sku extends Model implements SkuContract
             ->unique()
             ->toArray();
 
-        return static::whereHas('attrs', function (Builder $builder) use ($position) {
-            $attr_sku_table = config('morph-sku.table_names.attr_sku');
-            $builder->whereRaw(sprintf('%s.attr_id IN (%s)', $attr_sku_table, implode(',', $position)));
-        }, '=', count($position))->first();
+        // 子查询
+        $skuIdsQuery = AttrSku::select('sku_id')
+            ->whereIn(
+                'sku_id',
+                AttrSku::select('sku_id')->whereIn('attr_id', $position)
+            );
+
+        $sku = Sku::query()
+            ->whereIn('id', $skuIdsQuery)
+            ->withCount('attrs')
+            ->having('attrs_count', '=', count($position))
+            ->first();
+
+        return $sku;
     }
 
     /**
