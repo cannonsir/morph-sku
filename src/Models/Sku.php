@@ -18,6 +18,10 @@ class Sku extends Model implements SkuContract
         parent::__construct($attributes);
 
         $this->setTable(config('morph-sku.table_names.skus'));
+
+        static::deleting(function (self $sku) {
+            $sku->attrs()->detach();
+        });
     }
 
     public function producible(): MorphTo

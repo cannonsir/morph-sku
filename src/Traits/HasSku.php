@@ -35,8 +35,8 @@ trait HasSku
 
     /**
      * 同步属性值
-     * 
-     * @param $option
+     *
+     * @param OptionContract|integer|string $option
      * @param mixed ...$values
      */
     public function syncAttrValues($option, ...$values)
@@ -76,7 +76,7 @@ trait HasSku
     /**
      * 移除商品的某选项的对应属性值
      *
-     * @param $option
+     * @param OptionContract|integer|string $option
      * @return mixed
      */
     public function removeAttrValues($option)
@@ -89,7 +89,7 @@ trait HasSku
     /**
      * 添加属性值
      *
-     * @param Option $option
+     * @param OptionContract|integer|string $option
      * @param mixed ...$values
      * @return iterable
      */
@@ -115,8 +115,9 @@ trait HasSku
      *
      * @param array $position
      * @param array $payload
+     * @return Sku|\Illuminate\Database\Eloquent\Model|mixed|object|null
      */
-    public function updateOrCreateSkuByPosition(array $position, array $payload)
+    public function syncSkuWithAttrs(array $position, array $payload)
     {
         // 验证属性值不能为空
         if (empty($position)) {
@@ -174,7 +175,7 @@ trait HasSku
     /**
      * 查询选项实例
      *
-     * @param $option
+     * @param OptionContract|integer|string $option
      * @return mixed
      */
     protected function findOrCreateOption($option): OptionContract
