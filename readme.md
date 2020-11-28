@@ -16,7 +16,7 @@
 **引入**
 
 ```bash
-composer require gtd/morph-sku
+composer require cannonsir/morph-sku
 ```
 
 **发布迁移文件**
@@ -39,11 +39,11 @@ php artisan vendor:publish --tag=morph-sku-config
 
 ### #使用
 
-**在商品模型中引入`Gtd\MorphSku\Traits\HasSku`Trait**
+**在商品模型中引入`Cannonsir\MorphSku\Traits\HasSku`Trait**
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Gtd\MorphSku\Traits\HasSku;
+use Cannonsir\MorphSku\Traits\HasSku;
 
 class Product extends Model
 {
@@ -56,7 +56,7 @@ class Product extends Model
 **选项新增**
 
 ```php
-use Gtd\MorphSku\Models\Option;
+use Cannonsir\MorphSku\Models\Option;
 Option::create(['name' => '尺寸']);
 ```
 
@@ -120,7 +120,7 @@ $product->syncSkuWithAttrs([$attr1, $attr2, $attr3], ['amount' => 5000, 'stock' 
 **获取SKU**
 
 ```php
-use Gtd\MorphSku\Models\Sku;
+use Cannonsir\MorphSku\Models\Sku;
 // 通过属性值组合获取sku
 $sku = Sku::findByPosition($attr1, $attr2);
 // 获取产品sku实例
@@ -137,7 +137,7 @@ $product->skus()->delete();
 **通过属性值组合获取SKU**
 
 ```php
-use Gtd\MorphSku\Models\Sku;
+use Cannonsir\MorphSku\Models\Sku;
 Sku::findByPosition([$attr1, $attr2, $attr3])
 ```
 
