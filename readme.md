@@ -39,11 +39,11 @@ php artisan vendor:publish --tag=morph-sku-config
 
 ### #使用
 
-**在商品模型中引入`Cannonsir\MorphSku\Traits\HasSku`Trait**
+**在商品模型中引入`CannonSir\MorphSku\Traits\HasSku`Trait**
 
 ```php
 use Illuminate\Database\Eloquent\Model;
-use Cannonsir\MorphSku\Traits\HasSku;
+use CannonSir\MorphSku\Traits\HasSku;
 
 class Product extends Model
 {
@@ -56,7 +56,7 @@ class Product extends Model
 **选项新增**
 
 ```php
-use Cannonsir\MorphSku\Models\Option;
+use CannonSir\MorphSku\Models\Option;
 Option::create(['name' => '尺寸']);
 ```
 
@@ -120,7 +120,7 @@ $product->syncSkuWithAttrs([$attr1, $attr2, $attr3], ['amount' => 5000, 'stock' 
 **获取SKU**
 
 ```php
-use Cannonsir\MorphSku\Models\Sku;
+use CannonSir\MorphSku\Models\Sku;
 // 通过属性值组合获取sku
 $sku = Sku::findByPosition($attr1, $attr2);
 // 获取产品sku实例
@@ -137,7 +137,7 @@ $product->skus()->delete();
 **通过属性值组合获取SKU**
 
 ```php
-use Cannonsir\MorphSku\Models\Sku;
+use CannonSir\MorphSku\Models\Sku;
 Sku::findByPosition([$attr1, $attr2, $attr3])
 ```
 
