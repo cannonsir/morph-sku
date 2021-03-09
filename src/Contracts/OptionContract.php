@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\MorphSku\Contracts;
+namespace Connonsir\MorphSku\Contracts;
 
 interface OptionContract
 {

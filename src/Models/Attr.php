@@ -1,8 +1,8 @@
 <?php
 
-namespace Gtd\MorphSku\Models;
+namespace Connonsir\MorphSku\Models;
 
-use Gtd\MorphSku\Contracts\AttrContract;
+use Connonsir\MorphSku\Contracts\AttrContract;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;

@@ -1,8 +1,8 @@
 <?php
 
-namespace Gtd\MorphSku\Models;
+namespace Connonsir\MorphSku\Models;
 
-use Gtd\MorphSku\Contracts\OptionContract;
+use Connonsir\MorphSku\Contracts\OptionContract;
 use Illuminate\Database\Eloquent\Model;
 
 class Option extends Model implements OptionContract

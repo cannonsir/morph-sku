@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\MorphSku\Models;
+namespace Connonsir\MorphSku\Models;
 
 use Illuminate\Database\Eloquent\Relations\Pivot;
 

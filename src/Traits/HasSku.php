@@ -1,10 +1,10 @@
 <?php
 
-namespace Gtd\MorphSku\Traits;
+namespace Connonsir\MorphSku\Traits;
 
-use Gtd\MorphSku\Contracts\AttrContract;
-use Gtd\MorphSku\Contracts\OptionContract;
-use Gtd\MorphSku\Models\Sku;
+use Connonsir\MorphSku\Contracts\AttrContract;
+use Connonsir\MorphSku\Contracts\OptionContract;
+use Connonsir\MorphSku\Models\Sku;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Support\Arr;

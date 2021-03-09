@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\MorphSku;
+namespace Connonsir\MorphSku;
 
 use Illuminate\Support\Collection;
 use Illuminate\Filesystem\Filesystem;

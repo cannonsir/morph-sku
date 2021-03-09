@@ -1,5 +1,5 @@
 {
-    "name": "gtd/morph-sku",
+    "name": "connonsir/morph-sku",
     "description": "morph-sku",
     "type": "library",
     "authors": [
@@ -11,16 +11,16 @@
     "extra": {
         "laravel": {
             "providers": [
-                "Gtd\\MorphSku\\ServiceProvider"
+                "Connonsir\\MorphSku\\ServiceProvider"
             ]
         }
     },
     "require": {
-        "laravel/framework": "~5.5||~6.0"
+        "laravel/framework": "^5.5"
     },
     "autoload": {
         "psr-4": {
-            "Gtd\\MorphSku\\": "src"
+            "Connonsir\\MorphSku\\": "src"
         }
     }
 }

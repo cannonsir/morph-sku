@@ -1,6 +1,6 @@
 <?php
 
-namespace Gtd\MorphSku\Contracts;
+namespace Connonsir\MorphSku\Contracts;
 
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\MorphTo;
